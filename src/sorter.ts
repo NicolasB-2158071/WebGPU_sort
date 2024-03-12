@@ -248,7 +248,7 @@ export class GPUSorter {
                     buffer: {
                         type: "storage",
                         hasDynamicOffset: false,
-                        minBindingSize: 16 // Size of SorterState, ?
+                        minBindingSize: 16 // Size of SorterState
                     } as GPUBufferBindingLayout
                 } as GPUBindGroupLayoutEntry,
                 {
@@ -355,7 +355,7 @@ export class GPUSorter {
 
         let scatter_blocks_ruVar: number = scatter_blocks_ru(length); // rename because of ts
 
-        let histo_size: number = RS_RADIX_SIZE * 4; // size of u32, ?
+        let histo_size: number = RS_RADIX_SIZE * 4; // size of u32
 
         let internal_size: number = (RS_KEYVAL_SIZE + scatter_blocks_ruVar) * histo_size; // +1 safety
 
@@ -490,7 +490,7 @@ export class GPUSorter {
         let num_elements: number = (sort_first_n != null) ? sort_first_n : sort_buffers.len();
 
         // write number of elements to buffer
-        // queue.writeBuffer(sort_buffers.state_bufferVar, 0, new Uint32Array([num_elements])); // ?
+        queue.writeBuffer(sort_buffers.state_bufferVar, 0, new Uint32Array([num_elements]));
 
         this.record_calculate_histogram(bind_group, num_elements, encoder);
         this.record_prefix_histogram(bind_group, encoder);
@@ -523,7 +523,7 @@ export class GPUSorter {
         let internal_mem_buffer: GPUBuffer = this.create_internal_mem_buffer(device, length);
 
         let uniform_infos: SorterState = this.general_info_data(length);
-        let uniform_buffer: GPUBuffer = createBufferInit(device, { // ?
+        let uniform_buffer: GPUBuffer = createBufferInit(device, {
             label: "radix sort uniform buffer",
             contents: new Uint32Array([uniform_infos.num_keys, uniform_infos.padded_size, uniform_infos.even_pass, uniform_infos.odd_pass]),
             usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST
@@ -534,7 +534,7 @@ export class GPUSorter {
             entries: [
                 {
                     binding: 0,
-                    resource: {buffer: uniform_buffer} // ?
+                    resource: {buffer: uniform_buffer}
                 } as GPUBindGroupEntry,
                 {
                     binding: 1,
